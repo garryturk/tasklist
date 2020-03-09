@@ -1,0 +1,33 @@
+version: '2'
+networks:
+  servernetwork: {}
+volumes:
+  localstack-storage: {}
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4500-4599:4500-4599"
+    environment:
+      - DATA_DIR=/tmp/localstack/data
+      - SERVICES=dynamodb
+    volumes:
+      - localstack-storage:/tmp/localstack
+    networks:
+      - servernetwork
+  application:
+    build: .
+#     image: listapi
+    volumes:
+      - ./application:/application/code
+    env_file:
+      - ./env/compose.env
+    environment:
+      - AWS_ACCESS_KEY_ID=blah
+      - AWS_SECRET_ACCESS_KEY=blah
+    ports:
+      - "3000:3000"
+    networks:
+      - servernetwork
+    depends_on:
+      - localstack

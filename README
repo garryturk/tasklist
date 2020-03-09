@@ -1,0 +1,8 @@
+Easiest way to run is  via  docker, dockerfile and compose files are provided.
+
+To build the docker image:
+docker build -t listapi .
+
+Then:
+docker-compose up
+

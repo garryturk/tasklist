@@ -1,0 +1,24 @@
+# Get all tasks
+curl localhost:3000/tasks
+
+# Create a new task
+curl  -X POST \
+-d '{"title": "First task", "details":"This is my thing to do", "status": "todo"}' \
+-H "Content-Type: application/json" \
+http://localhost:3000/tasks
+
+curl  -X GET \
+http://localhost:3000/tasks/2
+
+# Update a task
+curl  -X PUT \
+-d '{"title": "Updated task", "details":"This is my thing to do", "status": "completed"}' \
+-H "Content-Type: application/json" \
+http://localhost:3000/tasks/1
+
+# Delete a task
+curl  -X DELETE \
+http://localhost:3000/tasks/2
+
+# Get the latest task
+curl localhost:3000/tasks/latest
