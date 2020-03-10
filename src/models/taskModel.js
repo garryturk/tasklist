@@ -100,7 +100,22 @@ const updateTask = async function(task, callback) {
 const deleteTask = async function(id, callback) {
   const response = {};
 
-  // Currently doesnt check if item already exists so success message may be misleading
+  let task;
+
+  try {
+    task = await dyn.tasks.get({ taskId: id });
+  } catch (err) {
+    response.status = 500;
+    response.body = { error: "internal error" };
+    callback(response);
+  }
+
+  if (!task) {
+    response.status = 404;
+    response.body = { error: "task not found" };
+    callback(response);
+  }
+
   try {
     await dyn.tasks.delete({ taskId: id });
   } catch (err) {

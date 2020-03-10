@@ -1,4 +1,5 @@
-Easiest way to run is  via  docker, dockerfile and compose files are provided.
+Easiest way to run is  via  docker, dockerfile and compose files are provided. These use localstack for a local 
+AWS implementation.
 
 To build the docker image:
 docker build -t listapi .
@@ -6,3 +7,18 @@ docker build -t listapi .
 Then:
 docker-compose up
 
+The service runs on port 3000 with a root path of /tasks. See the EXAMPLES file for curl examples
+
+Brief API overview
+
+Endpoint: /tasks
+PUT - create a task
+GET - get all tasks
+
+Endpoint: /tasks/{taskId}
+GET - retrieve a single task
+PUT - update a task
+DELETE - delete a task
+
+Endpoint: /tasks/latest
+GET - get the most recently created task

@@ -15,6 +15,7 @@ describe("/tasks", () => {
         details: "This is the first test task",
         status: "todo"
       });
+
     res.status.should.equal(202);
     res.type.should.equal("application/json");
     res.body.should.include.keys("taskId");
@@ -24,6 +25,7 @@ describe("/tasks", () => {
   });
 
   it("should retrieve all tasks", async function() {
+    // Populate some tasks to retrieve
     let temp = await chai
       .request(app)
       .post("/tasks")
@@ -46,6 +48,7 @@ describe("/tasks", () => {
 
     const secondId = temp.body.taskId;
 
+    // Validate both tasks were retrieved
     let res = await chai.request(app).get("/tasks");
     res.status.should.equal(200);
     res.type.should.equal("application/json");
@@ -73,6 +76,7 @@ describe("/tasks", () => {
         details: "This is the first test task"
       });
 
+    // Task has no status field
     res.status.should.equal(400);
     res.type.should.equal("application/json");
     res.body.Result.should.eql("Empty parameter");
@@ -81,6 +85,7 @@ describe("/tasks", () => {
 
 describe("/tasks/taskid", () => {
   it("should retrieve a task", async function() {
+    // Create a task to be retrieved
     let temp = await chai
       .request(app)
       .post("/tasks")
@@ -104,6 +109,7 @@ describe("/tasks/taskid", () => {
   });
 
   it("should retrieve the latest task", async function() {
+    // Create task to be retrieved
     let temp = await chai
       .request(app)
       .post("/tasks")
@@ -127,6 +133,7 @@ describe("/tasks/taskid", () => {
   });
 
   it("should update a task", async function() {
+    // Create task to be updated
     let temp = await chai
       .request(app)
       .post("/tasks")
@@ -145,6 +152,7 @@ describe("/tasks/taskid", () => {
         title: "Updated test task"
       });
 
+    // Now retrieve the updated task
     let res = await chai.request(app).get("/tasks/" + taskId);
     res.status.should.equal(200);
     res.type.should.equal("application/json");
@@ -157,6 +165,7 @@ describe("/tasks/taskid", () => {
   });
 
   it("should delete a task", async function() {
+    // Create task to be deleted
     let temp = await chai
       .request(app)
       .post("/tasks")
@@ -172,9 +181,32 @@ describe("/tasks/taskid", () => {
 
     res.status.should.equal(200);
     res.type.should.equal("application/json");
+    res.body.result.should.equal("deleted");
+  });
 
-    res = await chai.request(app).get("/tasks/" + taskId);
+  it("should not delete a non-existant task", async function() {
+    // Create task to be deleted
+    let temp = await chai
+      .request(app)
+      .post("/tasks")
+      .send({
+        title: "Doomed test task",
+        details: "This is the doomed test task",
+        status: "todo"
+      });
+
+    const taskId = temp.body.taskId;
+
+    // Delete the task - this should succeed
+    let res = await chai.request(app).delete("/tasks/" + taskId);
+
+    res.status.should.equal(200);
+    res.type.should.equal("application/json");
+
+    // Now try to delete that task again
+    res = await chai.request(app).delete("/tasks/" + taskId);
     res.status.should.equal(404);
+    res.body.error.should.equal("task not found");
     res.type.should.equal("application/json");
   });
 });
